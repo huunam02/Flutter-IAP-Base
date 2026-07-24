@@ -1,0 +1,42 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Outer target ring -->
+  <circle
+    cx="128"
+    cy="128"
+    r="86"
+    stroke="#4C56F5"
+    stroke-width="18"
+    fill="none"
+  />
+
+  <!-- Crosshair marks -->
+  <line x1="128" y1="18" x2="128" y2="48"
+        stroke="#4C56F5" stroke-width="18" stroke-linecap="round"/>
+
+  <line x1="128" y1="208" x2="128" y2="238"
+        stroke="#4C56F5" stroke-width="18" stroke-linecap="round"/>
+
+  <line x1="18" y1="128" x2="48" y2="128"
+        stroke="#4C56F5" stroke-width="18" stroke-linecap="round"/>
+
+  <line x1="208" y1="128" x2="238" y2="128"
+        stroke="#4C56F5" stroke-width="18" stroke-linecap="round"/>
+
+  <!-- Head -->
+  <circle
+    cx="128"
+    cy="102"
+    r="30"
+    fill="#4C56F5"
+  />
+
+  <!-- Body -->
+  <path
+    d="M88 178C88 150 104 140 128 140C152 140 168 150 168 178
+       C168 186 162 192 154 192H102
+       C94 192 88 186 88 178Z"
+    fill="#4C56F5"
+  />
+
+</svg>
