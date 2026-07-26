@@ -32,16 +32,9 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
           context.loaderOverlay.hide();
         }
         if (status == SubscriptionStatus.purchaseError) {
-          AppToast.showError(
-            context: context,
-            title:
-                controller.errorMessage.value ?? 'Có lỗi xảy ra khi thanh toán',
-          );
+          AppToast.showError(context: context, title: controller.errorMessage.value ?? 'Có lỗi xảy ra khi thanh toán');
         } else if (status == SubscriptionStatus.purchaseSuccess) {
-          AppToast.showSuccess(
-            context: context,
-            title: 'Thanh toán thành công!',
-          );
+          AppToast.showSuccess(context: context, title: 'Thanh toán thành công!');
         }
       }
     });
@@ -92,16 +85,11 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
       title: 'Gói Cao Cấp',
       price: price,
       icon: Icons.workspace_premium_rounded,
-      features: const [
-        'Lưu kỷ niệm 1 năm trên bản đồ',
-        'Tải lên hình ảnh và video từ thư viện',
-      ],
+      features: const ['Lưu kỷ niệm 1 năm trên bản đồ', 'Tải lên hình ảnh và video từ thư viện'],
       isSelected: controller.selectedPackageIndex.value == 1,
       isPopular: true,
       isActive: controller.activeProductId.value == 'premium_package',
-      remainingDays: controller.activeProductId.value == 'premium_package'
-          ? 30
-          : null,
+      remainingDays: controller.activeProductId.value == 'premium_package' ? controller.remainingDays : null,
       onTap: () {
         controller.selectPackage(1);
       },
@@ -127,9 +115,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
       features: const ['Lưu giữ kỷ niệm 1 năm trên bản đồ'],
       isSelected: controller.selectedPackageIndex.value == 0,
       isActive: controller.activeProductId.value == 'standard_package',
-      remainingDays: controller.activeProductId.value == 'standard_package'
-          ? 30
-          : null,
+      remainingDays: controller.activeProductId.value == 'standard_package' ? controller.remainingDays : null,
       onTap: () {
         controller.selectPackage(0);
       },

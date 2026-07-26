@@ -39,6 +39,7 @@ dependencies:
   loader_overlay: ^5.0.0
   cherry_toast: ^1.13.0
   get: ^4.7.3
+  shared_preferences: ^2.5.5
 
 dev_dependencies:
   flutter_test:

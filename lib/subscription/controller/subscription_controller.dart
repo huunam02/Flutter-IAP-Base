@@ -1,16 +1,10 @@
 import 'dart:async';
+import 'package:demo_iap/core/helper/shared_prefs_helper.dart';
 import 'package:demo_iap/core/services/iap_service.dart';
 import 'package:get/get.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
-enum SubscriptionStatus {
-  initial,
-  loadingProducts,
-  loadedProducts,
-  purchasePending,
-  purchaseSuccess,
-  purchaseError,
-}
+enum SubscriptionStatus { initial, loadingProducts, loadedProducts, purchasePending, purchaseSuccess, purchaseError }
 
 const Set<String> _kProductIds = {'premium_package', 'standard_package'};
 
@@ -24,13 +18,36 @@ class SubscriptionController extends GetxController {
   final errorMessage = RxnString();
   final selectedPackageIndex = 1.obs;
   final activeProductId = RxnString();
+  final purchaseDate = Rxn<DateTime>();
 
   StreamSubscription<List<PurchaseDetails>>? _purchaseSubscription;
+
+  int get remainingDays {
+    if (purchaseDate.value == null) return 0;
+    // Assuming 30 days subscription duration
+    final expiryDate = purchaseDate.value!.add(const Duration(days: 30));
+    final diff = expiryDate.difference(DateTime.now()).inDays;
+    return diff > 0 ? diff : 0;
+  }
 
   @override
   void onInit() {
     super.onInit();
+    _loadSubscriptionStatus();
     _initIAP();
+  }
+
+  Future<void> _loadSubscriptionStatus() async {
+    final savedProductId = await SharedPrefsHelper.getActiveProductId();
+    final savedDate = await SharedPrefsHelper.getPurchaseDate();
+    if (savedProductId != null) {
+      activeProductId.value = savedProductId;
+      if (savedDate != null) {
+        purchaseDate.value = savedDate;
+      } else {
+        purchaseDate.value = DateTime.now();
+      }
+    }
   }
 
   Future<void> _initIAP() async {
@@ -38,9 +55,7 @@ class SubscriptionController extends GetxController {
     await _iapService.initConnection();
 
     // 2. Listen to purchases stream
-    _purchaseSubscription = _iapService.purchaseStream.listen((
-      purchaseDetailsList,
-    ) {
+    _purchaseSubscription = _iapService.purchaseStream.listen((purchaseDetailsList) {
       _listenToPurchaseUpdated(purchaseDetailsList);
     });
 
@@ -90,6 +105,16 @@ class SubscriptionController extends GetxController {
     }
   }
 
+  DateTime _parseDate(String? transactionDate) {
+    if (transactionDate == null) return DateTime.now();
+    try {
+      final milliseconds = int.parse(transactionDate);
+      return DateTime.fromMillisecondsSinceEpoch(milliseconds);
+    } catch (e) {
+      return DateTime.now();
+    }
+  }
+
   void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
     for (var purchaseDetails in purchaseDetailsList) {
       if (purchaseDetails.status == PurchaseStatus.pending) {
@@ -97,12 +122,18 @@ class SubscriptionController extends GetxController {
       } else if (purchaseDetails.status == PurchaseStatus.error) {
         errorMessage.value = purchaseDetails.error?.message ?? 'Lỗi thanh toán';
         status.value = SubscriptionStatus.purchaseError;
-      } else if (purchaseDetails.status == PurchaseStatus.purchased ||
-          purchaseDetails.status == PurchaseStatus.restored) {
+      } else if (purchaseDetails.status == PurchaseStatus.purchased || purchaseDetails.status == PurchaseStatus.restored) {
         activeProductId.value = purchaseDetails.productID;
+        final date = _parseDate(purchaseDetails.transactionDate);
+        purchaseDate.value = date;
         status.value = SubscriptionStatus.purchaseSuccess;
+        _saveSubscriptionStatus(purchaseDetails.productID, date);
       }
     }
+  }
+
+  Future<void> _saveSubscriptionStatus(String productId, DateTime date) async {
+    await SharedPrefsHelper.saveSubscriptionStatus(productId, date);
   }
 
   @override

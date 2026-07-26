@@ -19,10 +19,7 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (_, child) {
-        return GetMaterialApp(
-          debugShowCheckedModeBanner: false,
-          home: SubscriptionPage(),
-        );
+        return GetMaterialApp(debugShowCheckedModeBanner: false, home: SubscriptionPage());
       },
     );
   }

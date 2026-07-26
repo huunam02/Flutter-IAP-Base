@@ -40,5 +40,4 @@ class AppColors {
 
   static const Color linearGradient1 = Color(0xFF4963F6);
   static const Color linearGradient2 = Color(0xFF809FFC);
-
 }
